@@ -6,16 +6,22 @@ This gem transform an Array into a excel file using the spreadsheet gem.
 
   @users = User.all
 
-  #
-  # defaults are export headers and all fields
-  #
-
   @users.to_xls
   @users.to_xls(:headers => false)
   @users.to_xls(:columns => [:name, :role])
   @users.to_xls(:columns => [:name, {:company => [:name, :address]}])
   @users.to_xls(:columns => [:name, {:company => [:name, :address]}], :headers => [:name, :company, :address])
 
+In order to send a file from the controller, you can save it on your server first:
+
+  @users.to_xls.write '/path/to/file/users.xls'
+  send_file '/path/to/file/users.xls'
+
+Alternatively you can use the method to_xls_data and send_data
+
+  send_data @users.to_xls_data, :filename => 'users.xls'
+    
+The method to_xls_data accepts the same parameters as to_xls.
 
 == Requirements
 
@@ -35,17 +41,9 @@ In the controller where you want to export to excel, add the format.xls line.
       respond_to do |format|
         format.html
         format.xml { render :xml => @users }
-        format.xls { send_data @users.to_xls }
+        format.xls { send_data @users.to_xls_data, :filename => 'users.xls' }
       end
     end
-
-    def show...
-    def new...
-    def edit...
-    def create...
-    def update...
-    def destroy...
-
   end
 
 
@@ -53,11 +51,9 @@ In the controller where you want to export to excel, add the format.xls line.
 
   spreadsheet gem
 
-
 == Install
 
   Include next gems in your environment.rb config file:
 
-    config.gem 'spreadsheet'  
     config.gem 'to_xls'
 

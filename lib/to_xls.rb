@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'spreadsheet'
+require 'stringio'
 
 class Array
   # Options for to_xls: columns, name, header
@@ -34,6 +35,12 @@ class Array
     end
 
     return book
+  end
+  
+  def to_xls_data(options = {})
+    data = StringIO.new('')
+    self.to_xls(options).write(data)
+    return data.string
   end
   
   private  
