@@ -19,7 +19,7 @@ class Array
         
         unless options[:headers] == false
           if options[:headers].is_a?(Array)
-            sheet.row(0).concat options[:headers]
+            sheet.row(0).concat options[:headers].collect(&:to_s)
           else
             aux_headers_to_xls(self.first, columns, sheet.row(0))
           end
@@ -45,7 +45,9 @@ class Array
   
   private  
   def aux_to_xls(item, column, row)
-    if column.is_a?(String) or column.is_a?(Symbol)
+    if item.nil?
+      row.push(nil)
+    elsif column.is_a?(String) or column.is_a?(Symbol)
       row.push(item.send(column))
     elsif column.is_a?(Hash)
       column.each{|key, values| aux_to_xls(item.send(key), values, row)}
@@ -55,7 +57,9 @@ class Array
   end
   
   def aux_headers_to_xls(item, column, row)
-    if column.is_a?(String) or column.is_a?(Symbol)
+    if item.nil?
+      row.push(nil)
+    elsif column.is_a?(String) or column.is_a?(Symbol)
       row.push("#{item.class.name.underscore}_#{column}")
     elsif column.is_a?(Hash)
       column.each{|key, values| aux_headers_to_xls(item.send(key), values, row)}
