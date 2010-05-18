@@ -1,37 +1,57 @@
 class Array
+  # Options for to_xls: columns, name, header
   def to_xls(options = {})
-    output = '<?xml version="1.0" encoding="UTF-8"?><Workbook xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:html="http://www.w3.org/TR/REC-html40" xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office"><Worksheet ss:Name="Sheet1"><Table>'
+    
+    book = Spreadsheet::Workbook.new
+    sheet = book.create_worksheet
+    
+    sheet.name = options[:name] || 'Sheet 1'    
 
     if self.any?
-      klass      = self.first.class
-      attributes = self.first.attributes.keys.sort.map(&:to_sym)
-
-      if options[:only]
-        columns = Array(options[:only]) & attributes
-      else
-        columns = attributes - Array(options[:except])
-      end
-
-      columns += Array(options[:methods])
+      columns = options[:columns] || self.first.attributes.keys.sort
 
       if columns.any?
+        line = 0
+        
         unless options[:headers] == false
-          output << "<Row>"
-          columns.each { |column| output << "<Cell><Data ss:Type=\"String\">#{klass.human_attribute_name(column)}</Data></Cell>" }
-          output << "</Row>"
-        end    
-
-        self.each do |item|
-          output << "<Row>"
-          columns.each do |column|
-            value = item.send(column)
-            output << "<Cell><Data ss:Type=\"#{value.is_a?(Integer) ? 'Number' : 'String'}\">#{value}</Data></Cell>"
+          if options[:headers].is_a?(Array)
+            sheet.row(0).concat options[:headers]
+          else
+            aux_headers_to_xls(self.first, columns, sheet.row(0))
           end
-          output << "</Row>"
+          line = 1
+        end
+        
+        self.each do |item|
+          row = sheet.row(line)
+          columns.each {|column| aux_to_xls(item, column, row)}
+          line += 1
         end
       end
     end
 
-    output << '</Table></Worksheet></Workbook>'
+    return book
   end
+  
+  private  
+  def aux_to_xls(item, column, row)
+    if column.is_a?(String) or column.is_a?(Symbol)
+      row.push(item.send(column))
+    elsif column.is_a?(Hash)
+      column.each{|key, values| aux_to_xls(item.send(key), values, row)}
+    elsif column.is_a?(Array)
+      column.each{|value| aux_to_xls(item, value, row)}
+    end
+  end
+  
+  def aux_headers_to_xls(item, column, row)
+    if column.is_a?(String) or column.is_a?(Symbol)
+      row.push("#{item.class.name.underscore}_#{column}")
+    elsif column.is_a?(Hash)
+      column.each{|key, values| aux_headers_to_xls(item.send(key), values, row)}
+    elsif column.is_a?(Array)
+      column.each{|value| aux_headers_to_xls(item, value, row)}
+    end
+  end
+  
 end
