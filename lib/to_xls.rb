@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'spreadsheet'
+
 class Array
   # Options for to_xls: columns, name, header
   def to_xls(options = {})

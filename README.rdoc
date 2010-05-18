@@ -56,7 +56,8 @@ In the controller where you want to export to excel, add the format.xls line.
 
 == Install
 
-  Include this gem in your environment.rb config file:
-  
+  Include next gems in your environment.rb config file:
+
+    config.gem 'spreadsheet'  
     config.gem 'to_xls'
 
