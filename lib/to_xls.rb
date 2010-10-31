@@ -2,14 +2,35 @@ require 'rubygems'
 require 'spreadsheet'
 require 'stringio'
 
-class Array
-  # Options for to_xls: columns, name, header
+class Hash
   def to_xls(options = {})
-    
     book = Spreadsheet::Workbook.new
-    sheet = book.create_worksheet
+
+    each do |key, value|
+      sheet = book.create_worksheet
+      sheet.name = key.to_s
+      value.to_xls({ :sheet => sheet }.merge(options[key] || {}))
+    end
     
-    sheet.name = options[:name] || 'Sheet 1'    
+    return book
+  end
+  
+  def to_xls_data(options = {})
+    data = StringIO.new('')
+    self.to_xls(options).write(data)
+    return data.string
+  end
+end
+
+class Array
+  # Options for to_xls: columns, name, header, sheet
+  def to_xls(options = {})
+    sheet = options[:sheet]
+    unless sheet
+      book = Spreadsheet::Workbook.new
+      sheet = book.create_worksheet
+      sheet.name = options[:name] || 'Sheet 1'
+    end
 
     if self.any?
       columns = options[:columns] || self.first.attributes.keys.sort
@@ -34,7 +55,7 @@ class Array
       end
     end
 
-    return book
+    return book || sheet
   end
   
   def to_xls_data(options = {})
