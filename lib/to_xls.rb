@@ -8,7 +8,7 @@ class Hash
 
     each do |key, value|
       sheet = book.create_worksheet
-      sheet.name = key.to_s.gsub('_', ' ').titleize
+      sheet.name = key.to_s
       value.to_xls({ :sheet => sheet }.merge(options[key] || {}))
     end
     
