@@ -33,9 +33,9 @@ class Array
     end
 
     if self.any?
-      columns = options[:columns] || self.first.attributes.keys.sort
+      columns = get_columns(options)
 
-      if columns.any?
+      if columns.is_a?(Array) && columns.any?
         line = 0
         
         unless options[:headers] == false
@@ -65,6 +65,28 @@ class Array
   end
   
   private  
+
+  def get_columns(options)
+    columns = options[:columns]
+    raise ArgumentError, ":columns (#{columns}) must be an array or nil" unless (columns.nil? || columns.is_a?(Array))
+    if !columns && can_get_columns_from_first_element?
+      columns = get_columns_from_first_element
+    end
+    return columns
+  end
+
+  def can_get_columns_from_first_element?
+    self.first && 
+    self.first.respond_to?(:attributes) &&
+    self.first.attributes.respond_to?(:keys) &&
+    self.first.attributes.keys.is_a?(Array)
+  end
+
+  def get_columns_from_first_element
+    self.first.attributes.keys.sort
+  end
+
+
   def aux_to_xls(item, column, row)
     if item.nil?
       row.push(nil)
@@ -81,7 +103,7 @@ class Array
     if item.nil?
       row.push(nil)
     elsif column.is_a?(String) or column.is_a?(Symbol)
-      row.push("#{item.class.name.underscore}_#{column}")
+      row.push(column.to_s)
     elsif column.is_a?(Hash)
       column.each{|key, values| aux_headers_to_xls(item.send(key), values, row)}
     elsif column.is_a?(Array)

@@ -14,15 +14,15 @@ This gem transform an Array or Hash into a excel file using the spreadsheet gem.
 
 When invoked on a Hash each value is output to a separate sheet named after the corresponding key. Options for each sheet can be specified using key/values in the options hash.
 
-	{ :users => @users, :posts => @posts }.to_xls
+  { :users => @users, :posts => @posts }.to_xls
   { :users => @users, :posts => @posts }.to_xls(:users => { :columns => [:name, :role] }, :posts => { :headers => [:title, :content] })
 
-In order to send a file from the controller, you can save it on your server first:
+If you want to use the file, for example in rails, you have two options. The first one is saving it first, and using send_file:
 
   @users.to_xls.write '/path/to/file/users.xls'
   send_file '/path/to/file/users.xls'
 
-Alternatively you can use the method to_xls_data and send_data
+The second option is using the method to_xls_data and send_data
 
   send_data @users.to_xls_data, :filename => 'users.xls'
     
@@ -30,11 +30,11 @@ The method to_xls_data accepts the same parameters as to_xls.
 
 == Requirements
 
-In config/initializers/mime_types.rb register the custom mime type.
+On rails, you might want to modify config/initializers/mime_types.rb and register a custom mime type there:
 
   Mime::Type.register "application/vnd.ms-excel", :xls  
 
-== How to use
+== Example of use in Rails
 
 In the controller where you want to export to excel, add the format.xls line.
 
@@ -54,11 +54,26 @@ In the controller where you want to export to excel, add the format.xls line.
 
 == Dependencies
 
-  spreadsheet gem
+  spreadsheet gem (automatically included if you require to_xls)
 
-== Install
+== Installing on rails
 
   Include next gems in your environment.rb config file:
 
     config.gem 'to_xls'
+
+== Contributing to to_xls
+ 
+* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
+* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
+* Fork the project
+* Start a feature/bugfix branch
+* Commit and push until you are happy with your contribution
+* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
+* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+
+== Copyright
+
+Copyright (c) 2011 Enrique García Cota. See LICENSE.txt for
+further details.
 
