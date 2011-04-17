@@ -5,9 +5,7 @@ require 'to_xls/array_renderer.rb'
 class Array
   # Options for to_xls: columns, name, header, sheet
   def to_xls(options = {})
-
-    renderer = ToXls::ArrayRenderer.new(self, options)
-    return renderer.render
+    ToXls::ArrayRenderer.new(self, options).render
   end
   
   def to_xls_data(options = {})

@@ -9,19 +9,11 @@ module ToXls
     end
 
     def render
-      fill_sheet
-      return @book || @sheet
-    end
-
-    def sheet
-      return @sheet if @sheet
-      @sheet = @options[:sheet]
-      unless @sheet
-        @book = Spreadsheet::Workbook.new
-        @sheet = @book.create_worksheet
-        @sheet.name = @options[:name] || 'Sheet 1'
-      end
-      @sheet
+      book = Spreadsheet::Workbook.new
+      sheet = book.create_worksheet
+      sheet.name = @options[:name] || 'Sheet 1'
+      fill_sheet(sheet)
+      return book
     end
 
     def columns
@@ -47,12 +39,8 @@ module ToXls
 
     def headers
       return  @headers if @headers
-      @headers = @options[:headers]
-      if @headers
-        raise ArgumentError, ":headers (#{@headers}) must be an array" unless @headers.is_a? Array
-      else
-        @headers = columns
-      end
+      @headers = @options[:headers] || columns
+      raise ArgumentError, ":headers (#{@headers}) must be an array" unless @headers.is_a? Array
       @headers
     end
 
@@ -61,8 +49,7 @@ module ToXls
     end
 
 private
-
-  def fill_sheet
+  def fill_sheet(sheet)
     if columns.any?
       row_index = 0
 

@@ -2,47 +2,25 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Array do
 
-  def mock_model(name, attributes)
-    attributes[:attributes] = attributes.clone
-    mock(name, attributes)
-  end
-
-  def mock_company(name, address)
-    mock_model( name, :name => name, :address => address )
-  end
-
-  def mock_user(name, age, email, company)
-    user = mock_model(name, :name => name, :age => age, :email => email)
-    user.stub!(:company).and_return(company)
-    user
-  end
-
-  def mock_users
-    acme = mock_company('Acme', 'One Road')
-    eads = mock_company('EADS', 'Another Road')
-
-    [ mock_user('Peter', 20, 'peter@gmail.com', acme),
-      mock_user('John',  25, 'john@gmail.com', acme),
-      mock_user('Day9',  27, 'day9@day9tv.com', eads)
-    ]
-  end
-
-  def check_sheet(sheet, array)
-    sheet.rows.each_with_index do |row, i|
-      row.should == array[i]
-    end
-  end
-
   it "should throw no error without data" do
     lambda { [].to_xls }.should_not raise_error
   end
 
+  describe ":name option" do
+    it "should default to 'Sheet 1' for sheets with no name" do
+      [].to_xls.worksheets.first.name.should == 'Sheet 1'
+    end
+
+    it "should use the :name option" do
+      [].to_xls(:name => 'Empty').worksheets.first.name.should == 'Empty'
+    end
+  end
 
   describe ":columns option" do
     it "should throw no error without columns" do
       lambda { [1,2,3].to_xls }.should_not raise_error
     end
-    it "should throw an error if columns exists but it isn't an array" do
+    it "should throw an error if columns isn't an array" do
       lambda { [1,2,3].to_xls(:columns => :foo) }.should raise_error
     end
     it "should use the attribute keys as columns if it exists" do

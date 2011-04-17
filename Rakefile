@@ -16,9 +16,9 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/splendeo/to_xls"
   gem.license = "MIT"
   gem.summary = %Q{to_xls for Arrays and Hashes}
-  gem.description = %Q{Adds a to_xls method to arrays and hashes. Can be used to generate excel files conveniently from arrays. Slightly skewed over ActiveRecord and Rails.}
+  gem.description = %Q{Adds a to_xls method to arrays, which can be used to generate excel files conveniently. Can rely on ActiveRecord sugar for obtaining attribute names.}
   gem.email = "egarcia@splendeo.es"
-  gem.authors = ["Enrique García Cota", "Francisco de Juan", "Alan Larkin"]
+  gem.authors = ["Enrique García Cota", "Francisco de Juan"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   gem.add_runtime_dependency 'spreadsheet', '> 0'
