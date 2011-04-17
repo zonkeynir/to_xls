@@ -42,3 +42,9 @@ def check_sheet(sheet, array)
     row.should == array[i]
   end
 end
+
+def make_book(array, options={})
+  book = Spreadsheet::Workbook.new
+  ToXls::ArrayWriter.new(array, options).write_book(book)
+  book
+end

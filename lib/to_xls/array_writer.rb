@@ -1,19 +1,49 @@
+require 'rubygems'
+require 'stringio'
 require 'spreadsheet'
 
 module ToXls
 
-  class ArrayRenderer
+  class ArrayWriter
     def initialize(array, options)
       @array = array
       @options = options
     end
 
-    def render
+    def write_string(string = '')
+      io = StringIO.new(string)
+      write_io(io)
+      io.string
+    end
+
+    def write_io(io)
       book = Spreadsheet::Workbook.new
+      write_book(book)
+      book.write(io)
+    end
+
+    def write_book(book)
       sheet = book.create_worksheet
       sheet.name = @options[:name] || 'Sheet 1'
-      fill_sheet(sheet)
+      write_sheet(sheet)
       return book
+    end
+
+    def write_sheet(sheet)
+      if columns.any?
+        row_index = 0
+
+        if headers_should_be_included?
+          fill_row(sheet.row(0), headers)
+          row_index = 1
+        end
+
+        @array.each do |model|
+          row = sheet.row(row_index)
+          fill_row(row, columns, model)
+          row_index += 1
+        end
+      end
     end
 
     def columns
@@ -49,35 +79,20 @@ module ToXls
     end
 
 private
-  def fill_sheet(sheet)
-    if columns.any?
-      row_index = 0
 
-      if headers_should_be_included?
-        fill_row(sheet.row(0), headers)
-        row_index = 1
-      end
-
-      @array.each do |model|
-        row = sheet.row(row_index)
-        fill_row(row, columns, model)
-        row_index += 1
+    def fill_row(row, column, model=nil)
+      case column
+      when String, Symbol
+        row.push(model ? model.send(column) : column)
+      when Hash
+        column.each{|key, values| fill_row(row, values, model && model.send(key))}
+      when Array
+        column.each{|value| fill_row(row, value, model)}
+      else
+        raise ArgumentError, "column #{column} has an invalid class (#{ column.class })"
       end
     end
-  end
-
-  def fill_row(row, column, model=nil)
-    case column
-    when String, Symbol
-      row.push(model ? model.send(column) : column)
-    when Hash
-      column.each{|key, values| fill_row(row, values, model && model.send(key))}
-    when Array
-      column.each{|value| fill_row(row, value, model)}
-    else
-      raise ArgumentError, "column #{column} has an invalid class (#{ column.class })"
-    end
-  end
 
   end
+
 end
