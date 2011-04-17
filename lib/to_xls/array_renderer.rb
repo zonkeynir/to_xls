@@ -1,3 +1,4 @@
+require 'spreadsheet'
 
 module ToXls
 
@@ -8,25 +9,8 @@ module ToXls
     end
 
     def render
-      fill_up_sheet
+      fill_sheet
       return @book || @sheet
-    end
-
-    def fill_up_sheet
-      if columns.any?
-        row_index = 0
-
-        if headers_should_be_included?
-          sheet.row(0).concat headers
-          row_index = 1
-        end
-
-        @array.each do |item|
-          row = sheet.row(row_index)
-          columns.each {|column| aux_to_xls(item, column, row)}
-          row_index += 1
-        end
-      end
     end
 
     def sheet
@@ -47,7 +31,7 @@ module ToXls
       if !@columns && can_get_columns_from_first_element?
         @columns = get_columns_from_first_element
       end
-      @columns = (@columns || []).collect{|c| c.to_s}
+      @columns = @columns || []
     end
 
     def can_get_columns_from_first_element?
@@ -58,15 +42,14 @@ module ToXls
     end
 
     def get_columns_from_first_element
-      @array.first.attributes.keys.sort.collect
+      @array.first.attributes.keys.sort_by {|sym| sym.to_s}.collect
     end
 
     def headers
       return  @headers if @headers
       @headers = @options[:headers]
       if @headers
-        raise ArgumentError, ":headers (#{@headers}) must be an array or nil" unless @headers.is_a? Array
-        @headers = @headers.collect{|h| h.to_s}
+        raise ArgumentError, ":headers (#{@headers}) must be an array" unless @headers.is_a? Array
       else
         @headers = columns
       end
@@ -77,30 +60,37 @@ module ToXls
       @options[:headers] != false
     end
 
+private
 
-    def aux_headers_to_xls(item, column, row)
-      if item.nil?
-        row.push(nil)
-      elsif column.is_a?(String) or column.is_a?(Symbol)
-        row.push(column.to_s)
-      elsif column.is_a?(Hash)
-        column.each{|key, values| aux_headers_to_xls(item.send(key), values, row)}
-      elsif column.is_a?(Array)
-        column.each{|value| aux_headers_to_xls(item, value, row)}
+  def fill_sheet
+    if columns.any?
+      row_index = 0
+
+      if headers_should_be_included?
+        fill_row(sheet.row(0), headers)
+        row_index = 1
+      end
+
+      @array.each do |model|
+        row = sheet.row(row_index)
+        fill_row(row, columns, model)
+        row_index += 1
       end
     end
+  end
 
-    def aux_to_xls(item, column, row)
-      if item.nil?
-        row.push(nil)
-      elsif column.is_a?(String) or column.is_a?(Symbol)
-        row.push(item.send(column))
-      elsif column.is_a?(Hash)
-        column.each{|key, values| aux_to_xls(item.send(key), values, row)}
-      elsif column.is_a?(Array)
-        column.each{|value| aux_to_xls(item, value, row)}
-      end
+  def fill_row(row, column, model=nil)
+    case column
+    when String, Symbol
+      row.push(model ? model.send(column) : column)
+    when Hash
+      column.each{|key, values| fill_row(row, values, model && model.send(key))}
+    when Array
+      column.each{|value| fill_row(row, value, model)}
+    else
+      raise ArgumentError, "column #{column} has an invalid class (#{ column.class })"
     end
+  end
 
   end
 end

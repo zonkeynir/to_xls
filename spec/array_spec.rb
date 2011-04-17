@@ -2,18 +2,17 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Array do
 
-
   def mock_model(name, attributes)
     attributes[:attributes] = attributes.clone
     mock(name, attributes)
   end
 
   def mock_company(name, address)
-    mock_model( name, 'name' => name, 'address' => address )
+    mock_model( name, :name => name, :address => address )
   end
 
   def mock_user(name, age, email, company)
-    user = mock_model(name, 'name' => name, 'age' => age, 'email' => email)
+    user = mock_model(name, :name => name, :age => age, :email => email)
     user.stub!(:company).and_return(company)
     user
   end
@@ -49,7 +48,7 @@ describe Array do
     it "should use the attribute keys as columns if it exists" do
       xls = mock_users.to_xls
       check_sheet( xls.worksheets.first,
-        [ ['age', 'email',           'name'],
+        [ [:age,  :email,           :name],
           [   20, 'peter@gmail.com', 'Peter'],
           [   25, 'john@gmail.com',  'John'],
           [   27, 'day9@day9tv.com', 'Day9']
@@ -59,7 +58,7 @@ describe Array do
     it "should allow re-sorting of the columns by using the :columns option" do
       xls = mock_users.to_xls(:columns => [:name, :email, :age])
       check_sheet( xls.worksheets.first,
-        [ ['name',  'email',        'age'],
+        [ [:name,   :email,          :age],
           ['Peter', 'peter@gmail.com', 20],
           ['John',  'john@gmail.com',  25],
           ['Day9',  'day9@day9tv.com', 27]
@@ -69,7 +68,18 @@ describe Array do
 
     it "should work properly when you provide it with both data and column names" do
       xls = [1,2,3].to_xls(:columns => [:to_s])
-      check_sheet( xls.worksheets.first, [ ['to_s'], ['1'], ['2'], ['3'] ] )
+      check_sheet( xls.worksheets.first, [ [:to_s], ['1'], ['2'], ['3'] ] )
+    end
+
+    it "should pick data from associations" do
+      xls = mock_users.to_xls(:columns => [:name, {:company => [:name]}])
+      check_sheet( xls.worksheets.first,
+        [ [:name,  :name],
+          ['Peter', 'Acme'],
+          ['John',  'Acme'],
+          ['Day9',  'EADS']
+        ]
+      )
     end
   end
 
@@ -98,6 +108,20 @@ describe Array do
         [ ['Peter',  'peter@gmail.com', 20],
           ['John',   'john@gmail.com',  25],
           ['Day9',   'day9@day9tv.com', 27]
+        ]
+      )
+    end
+
+    it "should pick data from associations" do
+      xls = mock_users.to_xls(
+        :columns => [:name, {:company => [:name]}],
+        :headers => [:name, :company_name]
+      )
+      check_sheet( xls.worksheets.first,
+        [ [:name,  :company_name],
+          ['Peter', 'Acme'],
+          ['John',  'Acme'],
+          ['Day9',  'EADS']
         ]
       )
     end
