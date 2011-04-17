@@ -15,7 +15,7 @@ This gem transform an Array or Hash into a excel file using the spreadsheet gem.
 When invoked on a Hash each value is output to a separate sheet named after the corresponding key. Options for each sheet can be specified using key/values in the options hash.
 
   { :users => @users, :posts => @posts }.to_xls
-  { :users => @users, :posts => @posts }.to_xls(:users => { :columns => [:name, :role] }, :posts => { :headers => [:title, :content] })
+  { :users => @users, :posts => @posts }.to_xls(:users => { :columns => [:name, :role] }, :posts => { :columns => [:title, :content] })
 
 If you want to use the file, for example in rails, you have two options. The first one is saving it first, and using send_file:
 
