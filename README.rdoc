@@ -7,32 +7,12 @@ This gem transform an Array or Hash into a excel file using the spreadsheet gem.
   @users = User.all
 
   @users.to_xls
-  @users.to_xls(:headers => false)
-  @users.to_xls(:columns => [:name, :role])
-  @users.to_xls(:columns => [:name, {:company => [:name, :address]}])
-  @users.to_xls(:columns => [:name, {:company => [:name, :address]}], :headers => [:name, :company, :address])
+  @users.to_xls(:name => "Users")      # specifies the Sheet name (by default Sheet1)
+  @users.to_xls(:headers => false)     # don't include headers
+  @users.to_xls(:columns => [:name, :role]) # include only these columns, on this order
+  @users.to_xls(:columns => [:name, {:company => [:name, :address]}]) # able to pick associations/called methods
+  @users.to_xls(:columns => [:name, {:company => [:name, :address]}], :headers => [:name, :company, :address]) # provide better names for the associated columns
 
-When invoked on a Hash each value is output to a separate sheet named after the corresponding key. Options for each sheet can be specified using key/values in the options hash.
-
-  { :users => @users, :posts => @posts }.to_xls
-  { :users => @users, :posts => @posts }.to_xls(:users => { :columns => [:name, :role] }, :posts => { :columns => [:title, :content] })
-
-If you want to use the file, for example in rails, you have two options. The first one is saving it first, and using send_file:
-
-  @users.to_xls.write '/path/to/file/users.xls'
-  send_file '/path/to/file/users.xls'
-
-The second option is using the method to_xls_data and send_data
-
-  send_data @users.to_xls_data, :filename => 'users.xls'
-    
-The method to_xls_data accepts the same parameters as to_xls.
-
-== Requirements
-
-On rails, you might want to modify config/initializers/mime_types.rb and register a custom mime type there:
-
-  Mime::Type.register "application/vnd.ms-excel", :xls  
 
 == Example of use in Rails
 
@@ -46,21 +26,50 @@ In the controller where you want to export to excel, add the format.xls line.
       respond_to do |format|
         format.html
         format.xml { render :xml => @users }
-        format.xls { send_data @users.to_xls_data, :filename => 'users.xls' }
+        format.xls { send_data @users.to_xls, :filename => 'users.xls' }
       end
     end
   end
 
+== Requirements
+
+On rails, you might want to modify config/initializers/mime_types.rb and register a custom mime type there:
+
+  Mime::Type.register "application/vnd.ms-excel", :xls  
 
 == Dependencies
 
-  spreadsheet gem (automatically included if you require to_xls)
+* spreadsheet gem (automatically included if you require to_xls)
 
-== Installing on rails
+== Installing on rails 2.x
 
-  Include next gems in your environment.rb config file:
+Include next gems in your environment.rb config file:
 
     config.gem 'to_xls'
+
+Then execute
+
+    rake gems:install
+
+
+== Installing on rails 3.x
+
+In your Gemfile
+
+    gem 'to_xls'
+
+Then execute
+
+    bundle install
+
+== ToXml::ArrayWriter
+
+You can export to a file or spreadsheet book using the internal ToXml::ArrayWriter class:
+
+    ToXls::ArrayWriter.new(users, :name => 'Users').write_io(file) # writes to a given file
+    ToXls::ArrayWriter.new(users, :name => 'Users').write_book(book) # writes to a spreadsheet book (adds a new sheet)
+
+The options of ArrayWriter.new(array, options) are the same as in to_xls.
 
 == Contributing to to_xls
  

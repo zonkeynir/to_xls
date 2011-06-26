@@ -1,29 +1,29 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe Array do
+describe ToXls::ArrayWriter do
 
-  it "should throw no error without data" do
+  it "throws no error without data" do
     lambda { [].to_xls }.should_not raise_error
   end
 
   describe ":name option" do
-    it "should default to 'Sheet 1' for sheets with no name" do
+    it "defaults to 'Sheet 1' for sheets with no name" do
       make_book([]).worksheets.first.name.should == 'Sheet 1'
     end
 
-    it "should use the :name option" do
+    it "uses the :name option" do
       make_book([], :name => 'Empty').worksheets.first.name.should == 'Empty'
     end
   end
 
   describe ":columns option" do
-    it "should throw no error without columns" do
+    it "throws no error without columns" do
       lambda { make_book([1,2,3]) }.should_not raise_error
     end
-    it "should throw an error if columns isn't an array" do
+    it "throws an error if columns isn't an array" do
       lambda { make_book([1,2,3], :columns => :foo) }.should raise_error
     end
-    it "should use the attribute keys as columns if it exists" do
+    it "uses the attribute keys as columns if it exists" do
       xls = make_book(mock_users)
       check_sheet( xls.worksheets.first,
         [ [:age,  :email,           :name],
@@ -33,7 +33,7 @@ describe Array do
         ]
       )
     end
-    it "should allow re-sorting of the columns by using the :columns option" do
+    it "allows re-sorting of the columns by using the :columns option" do
       xls = make_book(mock_users, :columns => [:name, :email, :age])
       check_sheet( xls.worksheets.first,
         [ [:name,   :email,          :age],
@@ -44,12 +44,12 @@ describe Array do
       )
     end
 
-    it "should work properly when you provide it with both data and column names" do
+    it "works properly when you provide it with both data and column names" do
       xls = make_book([1,2,3], :columns => [:to_s])
       check_sheet( xls.worksheets.first, [ [:to_s], ['1'], ['2'], ['3'] ] )
     end
 
-    it "should pick data from associations" do
+    it "picks data from associations" do
       xls = make_book(mock_users, :columns => [:name, {:company => [:name]}])
       check_sheet( xls.worksheets.first,
         [ [:name,  :name],
@@ -63,7 +63,7 @@ describe Array do
 
   describe ":headers option" do
 
-    it "should use the headers option if it exists" do
+    it "uses the headers option if it exists" do
       xls = make_book( mock_users,
         :columns => [:name, :email, :age],
         :headers => ['Nombre', 'Correo', 'Edad']
@@ -77,7 +77,7 @@ describe Array do
       )
     end
 
-    it "should include no headers if the headers option is false" do
+    it "includes no headers if the headers option is false" do
       xls = make_book( mock_users,
         :columns => [:name, :email, :age],
         :headers => false
@@ -90,12 +90,12 @@ describe Array do
       )
     end
 
-    it "should pick data from associations" do
-      xls = make_book( mock_users,
+    it "picks data from associations" do
+      book = make_book( mock_users,
         :columns => [:name, {:company => [:name]}],
         :headers => [:name, :company_name]
       )
-      check_sheet( xls.worksheets.first,
+      check_sheet( book.worksheets.first,
         [ [:name,  :company_name],
           ['Peter', 'Acme'],
           ['John',  'Acme'],
@@ -105,6 +105,60 @@ describe Array do
     end
 
   end
+
+  describe "#write_book" do
+    it "writes a new sheet in a book" do
+      book = Spreadsheet::Workbook.new
+      ToXls::ArrayWriter.new(mock_users).write_book(book)
+      check_sheet( book.worksheets.first,
+        [ [:age,  :email,           :name],
+          [   20, 'peter@gmail.com', 'Peter'],
+          [   25, 'john@gmail.com',  'John'],
+          [   27, 'day9@day9tv.com', 'Day9']
+        ]
+      )
+    end
+  end
+
+  describe "#write_sheet" do
+    it "writes a new sheet in a book" do
+      book = Spreadsheet::Workbook.new
+      sheet = book.create_worksheet
+      ToXls::ArrayWriter.new(mock_users).write_sheet(sheet)
+      check_sheet( sheet,
+        [ [:age,  :email,           :name],
+          [   20, 'peter@gmail.com', 'Peter'],
+          [   25, 'john@gmail.com',  'John'],
+          [   27, 'day9@day9tv.com', 'Day9']
+        ]
+      )
+    end
+  end
+
+  describe "#write_io" do
+    it "writes a new book in a stream" do
+      io1 = StringIO.new
+      ToXls::ArrayWriter.new(mock_users).write_io(io1)
+      io2 = StringIO.new
+      xls = make_book(mock_users, {})
+      xls.write(io2)
+      
+      io1.string.bytes.to_a.should == io2.string.bytes.to_a
+    end
+  end
+
+  describe "#write_string" do
+    it "writes a new sheet in a string" do
+      str = ToXls::ArrayWriter.new(mock_users).write_string()
+      io = StringIO.new
+      xls = make_book(mock_users, {})
+      xls.write(io)
+      
+      str.bytes.to_a.should == io.string.bytes.to_a
+    end
+  end
+
+  
 
 
 end

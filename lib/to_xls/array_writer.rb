@@ -5,7 +5,7 @@ require 'spreadsheet'
 module ToXls
 
   class ArrayWriter
-    def initialize(array, options)
+    def initialize(array, options = {})
       @array = array
       @options = options
     end
@@ -49,11 +49,8 @@ module ToXls
     def columns
       return  @columns if @columns
       @columns = @options[:columns]
-      raise ArgumentError, ":columns (#{columns}) must be an array or nil" unless (@columns.nil? || @columns.is_a?(Array))
-      if !@columns && can_get_columns_from_first_element?
-        @columns = get_columns_from_first_element
-      end
-      @columns = @columns || []
+      raise ArgumentError.new(":columns (#{columns}) must be an array or nil") unless (@columns.nil? || @columns.is_a?(Array))
+      @columns ||=  can_get_columns_from_first_element? ? get_columns_from_first_element : []
     end
 
     def can_get_columns_from_first_element?
@@ -64,13 +61,13 @@ module ToXls
     end
 
     def get_columns_from_first_element
-      @array.first.attributes.keys.sort_by {|sym| sym.to_s}.collect
+      @array.first.attributes.keys.sort_by {|sym| sym.to_s}.collect.to_a
     end
 
     def headers
       return  @headers if @headers
       @headers = @options[:headers] || columns
-      raise ArgumentError, ":headers (#{@headers}) must be an array" unless @headers.is_a? Array
+      raise ArgumentError, ":headers (#{@headers.inspect}) must be an array" unless @headers.is_a? Array
       @headers
     end
 
