@@ -8,18 +8,26 @@ module ToXls
     def initialize(array, options = {})
       @array = array
       @options = options
-      register_styles(@options[:styles])
+      # TODO first check to see if @options contains :styles
+      register_styles(@options[:style][:styles])
     end
 
     def register_styles(styles)
       @styles = {}
-      styles.each_with_index do |(name, style), index|
+      styles.each do |name, style|
         @styles[name] = Spreadsheet::Format.new style
       end
     end
 
-    def apply_styles (styles)
-      sheet.row(0).default_format = @styles['bold']
+    def apply_styles (styles, sheet)
+      locations  = @options[:style][:locations]
+      locations[:rows].each do |row, style|
+        sheet.row(row).default_format = @styles[style]
+      end
+      locations[:columns].each do |column, style|
+        sheet.column(column).default_format = @styles[style]
+      end
+
     end
 
     def write_string(string = '')
@@ -56,7 +64,7 @@ module ToXls
           row_index += 1
         end
 
-        apply_styles(@styles)
+        apply_styles(@styles, sheet)
       end
     end
 

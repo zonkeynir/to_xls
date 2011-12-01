@@ -56,23 +56,47 @@ end
   :columns => [ .... ]
 }
 
-# combined input into one hash
+#combined locations and styles
 @styles = {
+  :locations => {
+    :rows => {
+      0 => 'blue_bold_big',
+      10 => 'blue_bold_big'
+    },
+    :columns => { # for now, let's stay away from using column names. stick to numbers
+      1 => 'blue_bold_big',
+      2 => 'blue_bold_big'
+    }
+  },
+  :styles => {
+    'blue_bold_big' => {
+      :color => :blue,
+      :weight => :bold,
+      :size => 30
+    }
+  }
+}
+
+
+# combined with options into one hash
+@options = {
+  :style =>{
     :locations => {
-        :rows => {
-            0 => 'blue_bold_big',
-            10 => 'blue_bold_big'
-        },
-        :columns => { # for now, let's stay away from using column names. stick to numbers
-            1 => 'blue_bold_big',
-            2 => 'blue_bold_big'
-        }
+      :rows => {
+          0 => 'blue_bold_big',
+          10 => 'blue_bold_big'
+      },
+      :columns => { # for now, let's stay away from using column names. stick to numbers
+          1 => 'blue_bold_big',
+          2 => 'blue_bold_big'
+      }
     },
     :styles => {
-        'blue_bold_big' => {
-            :color => :blue,
-            :weight => :bold,
-            :size => 30
-        }
+      'blue_bold_big' => {
+          :color => :blue,
+          :weight => :bold,
+          :size => 30
+      }
     }
+  }
 }
