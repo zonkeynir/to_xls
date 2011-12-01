@@ -5,10 +5,13 @@ require 'spreadsheet'
 module ToXls
 
   class ArrayWriter
-    def initialize(array, options = {})
+    def initialize(array, options = {}, styles = {})
       @array = array
       @options = options
+      @styles = styles
     end
+
+
 
     def write_string(string = '')
       io = StringIO.new(string)
