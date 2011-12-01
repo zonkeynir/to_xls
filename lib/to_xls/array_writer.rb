@@ -5,13 +5,22 @@ require 'spreadsheet'
 module ToXls
 
   class ArrayWriter
-    def initialize(array, options = {}, styles = {})
+    def initialize(array, options = {})
       @array = array
       @options = options
-      @styles = styles
+      register_styles(@options[:styles])
     end
 
+    def register_styles(styles)
+      @styles = {}
+      styles.each_with_index do |(name, style), index|
+        @styles[name] = Spreadsheet::Format.new style
+      end
+    end
 
+    def apply_styles (styles)
+      sheet.row(0).default_format = @styles['bold']
+    end
 
     def write_string(string = '')
       io = StringIO.new(string)
@@ -46,6 +55,8 @@ module ToXls
           fill_row(row, columns, model)
           row_index += 1
         end
+
+        apply_styles(@styles)
       end
     end
 

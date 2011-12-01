@@ -73,6 +73,6 @@ end
             :color => :blue,
             :weight => :bold,
             :size => 30
-          }
+        }
     }
 }
