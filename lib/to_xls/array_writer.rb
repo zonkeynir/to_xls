@@ -8,8 +8,13 @@ module ToXls
     def initialize(array, options = {})
       @array = array
       @options = options
-      # TODO first check to see if @options contains :styles
-      register_styles(@options[:style][:styles])
+      if options.has_key?(:style)
+        if options[:style].has_key?(:locations) && options[:style].has_key?(:styles)
+          register_styles(@options[:style][:styles])
+        else
+          raise ArgumentError, "To_xls error => :style was included in options, but it does not contain the proper keys (:styles and :locations)"
+        end
+      end
     end
 
     def register_styles(styles)
@@ -22,10 +27,10 @@ module ToXls
     def apply_styles (styles, sheet)
       locations  = @options[:style][:locations]
       locations[:rows].each do |row, style|
-        sheet.row(row).default_format = @styles[style]
+        sheet.row(row).default_format = styles[style]
       end
       locations[:columns].each do |column, style|
-        sheet.column(column).default_format = @styles[style]
+        sheet.column(column).default_format = styles[style]
       end
 
     end
