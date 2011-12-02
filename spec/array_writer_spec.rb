@@ -158,7 +158,38 @@ describe ToXls::ArrayWriter do
     end
   end
 
-  
+  describe "#apply_styles" do
+    it "does not work without the right set of parameters in a hash" do
+      lambda {
+        book = make_book(mock_users, {
+            :style =>{
+              :styles => {
+                'blue_bold_big' => {
+                    :color => :blue,
+                    :weight => :bold,
+                }
+              }
+            }
+        })
+      }.should raise_error
+    end
 
+    it "functions properly when provided correctly formatted style hash" do
+      lambda {
+          book = make_book(mock_users, get_style_hash)
+        }.should_not raise_error
+    end
+
+    it "writes style data to sheet" do
+      str = ToXls::ArrayWriter.new(mock_users, get_style_hash).write_string()
+      io = StringIO.new
+      xls = make_book(mock_users, get_style_hash)
+      xls.write(io)
+
+      str.bytes.to_a.should == io.string.bytes.to_a
+    end
+
+  end
+  
 
 end

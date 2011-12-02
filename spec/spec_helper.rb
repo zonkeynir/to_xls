@@ -48,3 +48,27 @@ def make_book(array, options={})
   ToXls::ArrayWriter.new(array, options).write_book(book)
   book
 end
+
+def get_style_hash
+  options = {
+      :style =>{
+        :locations => {
+          :rows => {
+              0 => 'blue_bold_big',
+              50 => 'blue_bold_big'
+          },
+          :columns => { # for now, let's stay away from using column names. stick to numbers
+              1 => 'blue_bold_big',
+              2 => 'blue_bold_big'
+          }
+        },
+        :styles => {
+          'blue_bold_big' => {
+              :color => :blue,
+              :weight => :bold,
+          }
+        }
+      }
+    }
+  options
+end
