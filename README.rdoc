@@ -13,6 +13,32 @@ This gem transform an Array or Hash into a excel file using the spreadsheet gem.
   @users.to_xls(:columns => [:name, {:company => [:name, :address]}]) # able to pick associations/called methods
   @users.to_xls(:columns => [:name, {:company => [:name, :address]}], :headers => [:name, :company, :address]) # provide better names for the associated columns
 
+  =Using Styles (colors, font-size, etc)
+      There are a few extra parameters to include in your options hash.
+      1. Specify your styles, see below for an example
+      2. Specify the locations of where to apply those styles. You can specify a specific row or column. Note that both :row and :column are hashes within :locations. Individual cell support and additional features on their way!
+
+      @options = {
+        :style => {
+          :styles => {
+            'blue_bold_big' => {
+                :color => :blue,
+                :weight => :bold,
+            }
+          },
+          :locations => {
+            :rows => {
+                0 => 'blue_bold_big',
+                50 => 'blue_bold_big'
+            },
+            :columns => {
+                1 => 'blue_bold_big',
+                2 => 'blue_bold_big'
+            }
+          }
+        }
+      }
+      @users.to_xls(@options)
 
 == Example of use in Rails
 
