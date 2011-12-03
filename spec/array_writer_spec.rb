@@ -180,6 +180,7 @@ describe ToXls::ArrayWriter do
         }.should_not raise_error
     end
 
+    # TODO figure out if this test is really neccesary
     it "writes style data to sheet" do
       str = ToXls::ArrayWriter.new(mock_users, get_style_hash).write_string()
       io = StringIO.new
@@ -192,7 +193,7 @@ describe ToXls::ArrayWriter do
     it "find column index by column name" do
       book = Spreadsheet::Workbook.new
       sheet = book.create_worksheet
-      ToXls::ArrayWriter.new(mock_users).write_sheet(sheet)
+      ToXls::ArrayWriter.new(mock_users, get_style_hash).write_sheet(sheet)
 
     end
 

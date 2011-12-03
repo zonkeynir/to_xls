@@ -36,9 +36,12 @@ module ToXls
         sheet.row(row).default_format = styles[style]
       end
       locations[:columns].each do |column, style|
-        #sheet.column(column).default_format = styles[style]
-        sheet.column(find_column(column)).default_format = styles[style]
 
+        if(column.is_a? Integer)
+          sheet.column(column).default_format = styles[style]
+        else
+          sheet.column(find_column(column)).default_format = styles[style]
+        end
       end
     end
 
