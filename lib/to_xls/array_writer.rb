@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'stringio'
 require 'spreadsheet'
+require 'set'
 
 module ToXls
 
@@ -8,7 +9,6 @@ module ToXls
     def initialize(array, options = {})
       @array = array
       @options = options
-
     end
 
     def apply_styles (options, sheet)
@@ -36,8 +36,35 @@ module ToXls
         sheet.row(row).default_format = styles[style]
       end
       locations[:columns].each do |column, style|
-        sheet.column(column).default_format = styles[style]
+        #sheet.column(column).default_format = styles[style]
+        sheet.column(find_column(column)).default_format = styles[style]
+
       end
+    end
+
+    def find_column(column_name)
+      column_names = headers
+
+      if(column_names)
+        if column_names[0].is_a? (String)
+          column_index = column_names.index(column_name.to_s)
+          if column_index
+            return column_index
+          else
+            raise ArgumentError, "The inputted column name does not exist in provided data"
+          end
+        elsif column_names[0].is_a? (Symbol)
+          column_index = column_names.index(column_name)
+          if column_index
+            return column_index
+          else
+            raise ArgumentError, "The inputted column name does not exist in provided data"
+          end
+        end
+      else
+        raise "No headers specified or found"
+      end
+
     end
 
     def write_string(string = '')

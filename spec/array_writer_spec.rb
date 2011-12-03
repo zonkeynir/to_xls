@@ -189,6 +189,13 @@ describe ToXls::ArrayWriter do
       str.bytes.to_a.should == io.string.bytes.to_a
     end
 
+    it "find column index by column name" do
+      book = Spreadsheet::Workbook.new
+      sheet = book.create_worksheet
+      ToXls::ArrayWriter.new(mock_users).write_sheet(sheet)
+
+    end
+
   end
   
 
