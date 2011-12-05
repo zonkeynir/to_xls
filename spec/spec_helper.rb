@@ -57,7 +57,7 @@ def get_style_hash
               0 => 'blue_bold_big',
               50 => 'blue_bold_big'
           },
-          :columns => { # for now, let's stay away from using column names. stick to numbers
+          :columns => {
               0 => 'blue_bold_big',
               :email => 'blue_bold_big'
           }
