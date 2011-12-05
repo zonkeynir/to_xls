@@ -24,8 +24,7 @@ Note that both :row and :column are hashes within :locations. Individual cell su
           :styles => {
             'blue_bold_big' => {
                 :color => :blue,
-                :weight => :bold,
-				:name => 'Verdana'
+                :weight => :bold
             }
           },
           :locations => {
