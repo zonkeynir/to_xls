@@ -16,7 +16,8 @@ This gem transform an Array or Hash into a excel file using the spreadsheet gem.
 ===Using Styles (colors, font-size, etc)
 There are a few extra parameters to include in your options hash.
 1. Specify your styles, see below for an example
-2. Specify the locations of where to apply those styles. You can specify a specific row or column. Note that both :row and :column are hashes within :locations. Individual cell support and additional features on their way!
+2. Specify the locations of where to apply those styles. You can specify a specific row or column. Columns can be specified by either name (symbol) or integer.
+Note that both :row and :column are hashes within :locations. Individual cell support is not available yet.
 
       @options = {
         :style => {
@@ -24,6 +25,7 @@ There are a few extra parameters to include in your options hash.
             'blue_bold_big' => {
                 :color => :blue,
                 :weight => :bold,
+				:name => 'Verdana' # font name
             }
           },
           :locations => {
@@ -33,7 +35,7 @@ There are a few extra parameters to include in your options hash.
             },
             :columns => {
                 1 => 'blue_bold_big',
-                2 => 'blue_bold_big'
+                :email => 'blue_bold_big'
             }
           }
         }
