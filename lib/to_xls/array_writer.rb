@@ -49,14 +49,14 @@ module ToXls
       column_names = headers
 
       if(column_names)
-        if column_names[0].is_a? (String)
+        if column_names[0].is_a?(String)
           column_index = column_names.index(column_name.to_s)
           if column_index
             return column_index
           else
             raise ArgumentError, "The inputted column name does not exist in provided data"
           end
-        elsif column_names[0].is_a? (Symbol)
+        elsif column_names[0].is_a?(Symbol)
           column_index = column_names.index(column_name)
           if column_index
             return column_index
@@ -116,7 +116,7 @@ module ToXls
     end
 
     def can_get_columns_from_first_element?
-      @array.first && 
+      @array.first &&
       @array.first.respond_to?(:attributes) &&
       @array.first.attributes.respond_to?(:keys) &&
       @array.first.attributes.keys.is_a?(Array)
