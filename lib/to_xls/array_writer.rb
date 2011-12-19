@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'stringio'
 require 'spreadsheet'
-require 'set'
 
 module ToXls
 
@@ -12,62 +11,29 @@ module ToXls
     end
 
     def apply_styles (options, sheet)
-      if options.has_key?(:style)
-        if options[:style].has_key?(:locations) && options[:style].has_key?(:styles)
-          styles = register_styles(@options[:style][:styles])
-          render_styles(styles, sheet)
-        else
-          raise ArgumentError, "To_xls error => :style was included in options, but it does not contain the proper keys (:styles and :locations)"
-        end
+      if options.has_key?(:cell_style)
+        style = register_style(@options[:cell_style])
+        render_style(style, sheet, :cell_style)
+      end
+
+      if options.has_key?(:header_style)
+        style = register_style(@options[:header_style])
+        render_style(style, sheet, :header_style)
       end
     end
 
-    def register_styles(_styles)
-      styles = {}
-      _styles.each do |name, style|
-        styles[name] = Spreadsheet::Format.new style
-      end
-      styles
+    def register_style(style)
+      style = Spreadsheet::Format.new style
     end
 
-    def render_styles(styles, sheet)
-      locations  = @options[:style][:locations]
-      locations[:rows].each do |row, style|
-        sheet.row(row).default_format = styles[style]
-      end
-      locations[:columns].each do |column, style|
-
-        if(column.is_a? Integer)
-          sheet.column(column).default_format = styles[style]
-        else
-          sheet.column(find_column(column)).default_format = styles[style]
-        end
-      end
-    end
-
-    def find_column(column_name)
-      column_names = headers
-
-      if(column_names)
-        if column_names[0].is_a?(String)
-          column_index = column_names.index(column_name.to_s)
-          if column_index
-            return column_index
-          else
-            raise ArgumentError, "The inputted column name does not exist in provided data"
-          end
-        elsif column_names[0].is_a?(Symbol)
-          column_index = column_names.index(column_name)
-          if column_index
-            return column_index
-          else
-            raise ArgumentError, "The inputted column name does not exist in provided data"
-          end
-        end
+    def render_style(style, sheet, location)
+      if (location == :cell_style)
+        sheet.default_format = style
+      elsif (location == :header_style)
+        sheet.row(0).default_format = style
       else
-        raise "No headers specified or found"
+        raise ArgumentError, "To_xls error => unrecognized location #{location}"
       end
-
     end
 
     def write_string(string = '')
