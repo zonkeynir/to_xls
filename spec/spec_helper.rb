@@ -51,24 +51,7 @@ end
 
 def get_style_hash
   options = {
-      :style =>{
-        :locations => {
-          :rows => {
-              0 => 'blue_bold_big',
-              50 => 'blue_bold_big'
-          },
-          :columns => {
-              0 => 'blue_bold_big',
-              :email => 'blue_bold_big'
-          }
-        },
-        :styles => {
-          'blue_bold_big' => {
-              :color => :blue,
-              :weight => :bold,
-          }
-        }
-      }
-    }
-  options
+      :cell_style => {:color => "blue"},
+      :header_style => {:weight => :bold, :color => :red}
+  }
 end
