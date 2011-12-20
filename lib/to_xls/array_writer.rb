@@ -8,32 +8,8 @@ module ToXls
     def initialize(array, options = {})
       @array = array
       @options = options
-    end
-
-    def apply_styles (options, sheet)
-      if options.has_key?(:cell_style)
-        style = register_style(@options[:cell_style])
-        render_style(style, sheet, :cell_style)
-      end
-
-      if options.has_key?(:header_style)
-        style = register_style(@options[:header_style])
-        render_style(style, sheet, :header_style)
-      end
-    end
-
-    def register_style(style)
-      style = Spreadsheet::Format.new style
-    end
-
-    def render_style(style, sheet, location)
-      if (location == :cell_style)
-        sheet.default_format = style
-      elsif (location == :header_style)
-        sheet.row(0).default_format = style
-      else
-        raise ArgumentError, "To_xls error => unrecognized location #{location}"
-      end
+      @cell_style = create_style :cell_style
+      @header_style = create_style :header_style
     end
 
     def write_string(string = '')
@@ -60,17 +36,17 @@ module ToXls
         row_index = 0
 
         if headers_should_be_included?
+          apply_style_to_row(sheet.row(0), @header_style)
           fill_row(sheet.row(0), headers)
           row_index = 1
         end
 
         @array.each do |model|
           row = sheet.row(row_index)
+          apply_style_to_row(row, @cell_style)
           fill_row(row, columns, model)
           row_index += 1
         end
-
-        apply_styles(@options, sheet)
       end
     end
 
@@ -104,6 +80,14 @@ module ToXls
     end
 
 private
+
+    def apply_style_to_row(row, style)
+      row.default_format = style if style
+    end
+
+    def create_style(name)
+      Spreadsheet::Format.new @options[name] if @options.has_key? name
+    end
 
     def fill_row(row, column, model=nil)
       case column
