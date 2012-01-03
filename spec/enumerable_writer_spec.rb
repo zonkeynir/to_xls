@@ -109,7 +109,7 @@ describe ToXls::EnumerableWriter do
   describe "#write_book" do
     it "writes a new sheet in a book" do
       book = Spreadsheet::Workbook.new
-      ToXls::ArrayWriter.new(mock_users).write_book(book)
+      ToXls::EnumerableWriter.new(mock_users).write_book(book)
       check_sheet( book.worksheets.first,
         [ [:age,  :email,           :name],
           [   20, 'peter@gmail.com', 'Peter'],

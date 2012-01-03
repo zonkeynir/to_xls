@@ -1,1 +1,1 @@
-require 'to_xls/array_patch.rb'
+require 'to_xls/enumerable_patch.rb'

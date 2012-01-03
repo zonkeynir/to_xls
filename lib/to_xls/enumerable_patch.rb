@@ -1,9 +1,9 @@
 
-require 'to_xls/array_writer.rb'
+require 'to_xls/enumerable_writer.rb'
 
-class Array
+module Enumerable
   # Options for to_xls: columns, name, header, sheet
   def to_xls(options = {})
-    ToXls::ArrayWriter.new(self, options).write_string
+    ToXls::EnumerableWriter.new(self, options).write_string
   end
 end
