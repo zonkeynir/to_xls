@@ -20,8 +20,6 @@ To change the format of the cells and headers the code should be like this:
 
       User.all.to_xls :cell_format => {:color => blue}, :header_format => {:weight => :bold, :color => :red}
 
-This format will be kept for all tables created with to_xls
-
 == Example of use in Rails
 
 In the controller where you want to export to excel, add the format.xls line.
