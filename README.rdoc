@@ -22,7 +22,7 @@ To change the format of the cells and headers the code should be like this:
 
 To have a more specific description of the format admited for the cells and headers you should have a look on the source code of spreadsheet gem. This gem runs under to_xls, so the format supported by this gem are the ones of spreadsheet.
 
-[ulr=http://scm.ywesee.com/?p=spreadsheet/.git;a=blob;f=lib/spreadsheet/format.rb;h=ceef6bb6618238d1ff5cc0462826e2c127c272f1;hb=HEAD] Source code for formats
+Source code for formats [ulr]http://scm.ywesee.com/?p=spreadsheet/.git;a=blob;f=lib/spreadsheet/format.rb;h=ceef6bb6618238d1ff5cc0462826e2c127c272f1;hb=HEAD
 
 == Example of use in Rails
 
