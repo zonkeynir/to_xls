@@ -18,7 +18,15 @@ This gem includes a simplified way to change the format of the cells. Also this 
 
 To change the format of the cells and headers the code should be like this:
 
-      User.all.to_xls :cell_format => {:color => blue}, :header_format => {:weight => :bold, :color => :red}
+      User.all.to_xls :cell_format => {:color => :blue}, :header_format => {:weight => :bold, :color => :red}
+
+You may also change just one of the formats, for example the cell's format, in this case the code should be like this:
+
+      User.all.to_xls :cell_format => {:color => :red}
+
+In Case you want to modify just the headers format:
+
+      User.all.to_xls :header_format => {:weight => :bold, :color => :green}
 
 == Example of use in Rails
 
