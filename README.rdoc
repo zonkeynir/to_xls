@@ -20,7 +20,7 @@ To change the format of the cells and headers the code should be like this:
 
       User.all.to_xls :cell_format => {:color => :blue}, :header_format => {:weight => :bold, :color => :red}
 
-To have a more specific description of the format admited for the cells and headers you should have a look on the source[http://scm.ywesee.com/?p=spreadsheet/.git;a=blob;f=lib/spreadsheet/format.rb;h=ceef6bb6618238d1ff5cc0462826e2c127c272f1;hb=HEAD] code of spreadsheet gem. This gem runs under to_xls, so the format supported by this gem are the ones of spreadsheet.
+To have a more specific description of the format admited for the cells and headers you should have a look {on the source code of spreadsheet gem}[http://scm.ywesee.com/?p=spreadsheet/.git;a=blob;f=lib/spreadsheet/format.rb;h=ceef6bb6618238d1ff5cc0462826e2c127c272f1;hb=HEAD]. This gem runs under to_xls, so the format supported by this gem are the ones of spreadsheet.
 
 == Example of use in Rails
 
