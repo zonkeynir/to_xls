@@ -11,9 +11,10 @@ RSpec.configure do |config|
   
 end
 
-def mock_model(name, attributes)
-  attributes[:attributes] = attributes.clone
-  mock(name, attributes)
+def mock_model(name, properties)
+  properties[:attributes] = properties.clone
+  properties[:name_only] = [:name]
+  mock(name, properties)
 end
 
 def mock_company(name, address)

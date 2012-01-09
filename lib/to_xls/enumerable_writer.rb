@@ -5,9 +5,12 @@ require 'spreadsheet'
 module ToXls
 
   class EnumerableWriter
+    attr_accessor :options
+
     def initialize(array, options = {})
       @array = array
-      @options = options
+      @options = options.clone
+      @options[:column_names] ||= :attributes
     end
 
     def write_string(string = '')
@@ -54,10 +57,12 @@ module ToXls
     end
 
     def can_get_columns_from_first_element?
-      @array.first && 
-      @array.first.respond_to?(:attributes) &&
-      @array.first.attributes.respond_to?(:keys) &&
-      @array.first.attributes.keys.is_a?(Array)
+      column_names = @options[:column_names]
+
+      @array.first &&
+      @array.first.respond_to?(column_names) &&
+      @array.first.send(column_names).respond_to?(:keys) &&
+      @array.first.send(column_names).keys.is_a?(Array)
     end
 
     def get_columns_from_first_element
@@ -65,7 +70,7 @@ module ToXls
     end
 
     def headers
-      return  @headers if @headers
+      return @headers if @headers
       @headers = @options[:headers] || columns
       raise ArgumentError, ":headers (#{@headers.inspect}) must be an array" unless @headers.is_a? Array
       @headers

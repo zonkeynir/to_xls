@@ -16,6 +16,25 @@ describe ToXls::EnumerableWriter do
     end
   end
 
+  describe ":column_names option" do
+    it "defaults to 'attributes' for column_names if it is empty" do
+      writer = ToXls::EnumerableWriter.new([])
+      writer.options[:column_names].should == :attributes
+    end
+
+    it "accepts other names than 'attributes'" do
+      writer = ToXls::EnumerableWriter.new([], :column_names => :methods)
+      writer.options[:column_names].should == :methods
+    end
+
+    it "uses column_names when it's not 'attributes'" do
+      xls = make_book(mock_users, :column_names => :name_only)
+      check_sheet( xls.worksheets.first,
+        [ [:name], ['Peter'], ['John'], ['Day9'] ]
+      )
+    end
+  end
+
   describe ":columns option" do
     it "throws no error without columns" do
       lambda { make_book([1,2,3]) }.should_not raise_error
