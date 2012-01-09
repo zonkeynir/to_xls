@@ -16,7 +16,7 @@ This gem transform an Array or Hash into a excel file using the spreadsheet gem.
 == Simple Format
 This gem includes a simplified way to change the format of the cells. Also this gem provides a simplified way for changing the format of the headers.
 
-To change the format of the cell the code should be like this:
+To change the format of the cells and headers the code should be like this:
 
       User.all.to_xls :cell_format => {:color => blue}, :header_format => {:weight => :bold, :color => :red}
 
