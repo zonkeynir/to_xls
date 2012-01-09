@@ -1,7 +1,6 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
-require 'factory_girl'
 require 'to_xls'
 
 # Requires supporting files with custom matchers and macros, etc,
@@ -45,7 +44,7 @@ end
 
 def make_book(array, options={})
   book = Spreadsheet::Workbook.new
-  ToXls::ArrayWriter.new(array, options).write_book(book)
+  ToXls::EnumerableWriter.new(array, options).write_book(book)
   book
 end
 
