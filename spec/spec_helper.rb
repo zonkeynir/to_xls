@@ -36,7 +36,7 @@ end
 
 def make_book(array, options={})
   book = Spreadsheet::Workbook.new
-  ToXls::EnumerableWriter.new(array, options).write_book(book)
+  ToXls::Writer.new(array, options).write_book(book)
   book
 end
 

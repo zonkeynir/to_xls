@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe ToXls::EnumerableWriter do
+describe ToXls::Writer do
 
   it "throws no error without data" do
     lambda { [].to_xls }.should_not raise_error
@@ -109,7 +109,7 @@ describe ToXls::EnumerableWriter do
   describe "#write_book" do
     it "writes a new sheet in a book" do
       book = Spreadsheet::Workbook.new
-      ToXls::EnumerableWriter.new(mock_users).write_book(book)
+      ToXls::Writer.new(mock_users).write_book(book)
       check_sheet( book.worksheets.first,
         [ [:age,  :email,           :name],
           [   20, 'peter@gmail.com', 'Peter'],
@@ -124,7 +124,7 @@ describe ToXls::EnumerableWriter do
     it "writes a new sheet in a book" do
       book = Spreadsheet::Workbook.new
       sheet = book.create_worksheet
-      ToXls::EnumerableWriter.new(mock_users).write_sheet(sheet)
+      ToXls::Writer.new(mock_users).write_sheet(sheet)
       check_sheet( sheet,
         [ [:age,  :email,           :name],
           [   20, 'peter@gmail.com', 'Peter'],
@@ -138,7 +138,7 @@ describe ToXls::EnumerableWriter do
   describe "#write_io" do
     it "writes a new book in a stream" do
       io1 = StringIO.new
-      ToXls::EnumerableWriter.new(mock_users).write_io(io1)
+      ToXls::Writer.new(mock_users).write_io(io1)
       io2 = StringIO.new
       xls = make_book(mock_users, {})
       xls.write(io2)
@@ -149,7 +149,7 @@ describe ToXls::EnumerableWriter do
 
   describe "#write_string" do
     it "writes a new sheet in a string" do
-      str = ToXls::EnumerableWriter.new(mock_users).write_string()
+      str = ToXls::Writer.new(mock_users).write_string()
       io = StringIO.new
       xls = make_book(mock_users, {})
       xls.write(io)

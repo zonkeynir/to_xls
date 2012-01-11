@@ -4,7 +4,7 @@ require 'spreadsheet'
 
 module ToXls
 
-  class EnumerableWriter
+  class Writer
     def initialize(array, options = {})
       @array = array
       @options = options
