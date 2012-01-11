@@ -1,12 +1,14 @@
 = to_xls gem
 
-This gem transform an Array or Hash into a excel file using the spreadsheet gem.
+This gem transform an Enumeration (i.e. an Array) into an excel file using the spreadsheet gem.
+
+It is (very slightly) oriented towards exporting ActiveRecord sets, but it can be used outside of Rails as well.
 
 == Usage
 
   @users = User.all
 
-  @users.to_xls
+  @users.to_xls                        # by default, it exports using the "attributes" field on the first item of the collection
   @users.to_xls(:name => "Users")      # specifies the Sheet name (by default Sheet1)
   @users.to_xls(:headers => false)     # don't include headers
   @users.to_xls(:columns => [:name, :role]) # include only these columns, on this order
