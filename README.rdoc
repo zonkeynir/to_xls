@@ -98,3 +98,11 @@ further details.
 == Credits
 
 * Ian Link & mlecho helped implementing the formats
+
+== Changelog
+
+1.5.0
+
+* to_xls now extends Enumerable instead of Array
+* Included :cell_format and :header_format options
+* Used bundler instead of jeweller
