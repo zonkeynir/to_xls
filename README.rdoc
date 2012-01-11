@@ -11,16 +11,17 @@ This gem transform an Array or Hash into a excel file using the spreadsheet gem.
   @users.to_xls(:headers => false)     # don't include headers
   @users.to_xls(:columns => [:name, :role]) # include only these columns, on this order
   @users.to_xls(:columns => [:name, {:company => [:name, :address]}]) # able to pick associations/called methods
-  @users.to_xls(:columns => [:name, {:company => [:name, :address]}], :headers => [:name, :company, :address]) # provide better names for the associated columns
+  @users.to_xls(:columns => [:name, {:company => [:name, :address]}], :headers => ['Name', 'Company', 'Address']) # provide better names for the associated columns
 
-== Simple Format
+== Format
+
 This gem includes a simplified way to change the format of the cells. Also this gem provides a simplified way for changing the format of the headers.
 
 To change the format of the cells and headers the code should be like this:
 
       User.all.to_xls :cell_format => {:color => :blue}, :header_format => {:weight => :bold, :color => :red}
 
-To have a more specific description of the format admited for the cells and headers you should have a look {on the source code of spreadsheet gem}[http://scm.ywesee.com/?p=spreadsheet/.git;a=blob;f=lib/spreadsheet/format.rb;h=ceef6bb6618238d1ff5cc0462826e2c127c272f1;hb=HEAD]. This gem runs under to_xls, so the format supported by this gem are the ones of spreadsheet.
+To have a full list of the format admited for the cells and headers you may have a look {on the source code of spreadsheet gem}[http://scm.ywesee.com/?p=spreadsheet/.git;a=blob;f=lib/spreadsheet/format.rb;h=ceef6bb6618238d1ff5cc0462826e2c127c272f1;hb=HEAD]. This gem runs under to_xls, so the format supported by this gem are the ones of spreadsheet.
 
 == Example of use in Rails
 
@@ -70,14 +71,14 @@ Then execute
 
     bundle install
 
-== ToXml::ArrayWriter
+== ToXml::Writer
 
-You can export to a file or spreadsheet book using the internal ToXml::ArrayWriter class:
+You can export to a file or spreadsheet book using the internal ToXml::Writer class:
 
-    ToXls::ArrayWriter.new(users, :name => 'Users').write_io(file) # writes to a given file
-    ToXls::ArrayWriter.new(users, :name => 'Users').write_book(book) # writes to a spreadsheet book (adds a new sheet)
+    ToXls::Writer.new(users, :name => 'Users').write_io(file) # writes to a given file
+    ToXls::Writer.new(users, :name => 'Users').write_book(book) # writes to a spreadsheet book (adds a new sheet)
 
-The options of ArrayWriter.new(array, options) are the same as in to_xls.
+The options of Writer.new(array, options) are the same as in to_xls.
 
 == Contributing to to_xls
  
@@ -91,5 +92,9 @@ The options of ArrayWriter.new(array, options) are the same as in to_xls.
 
 == Copyright
 
-Copyright (c) 2011 Enrique García Cota. See LICENSE.txt for
+Copyright (c) 2011 Splendeo Innovación. See MIT-LICENSE.txt for
 further details.
+
+== Credits
+
+* Ian Link & mlecho helped implementing the formats
