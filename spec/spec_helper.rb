@@ -3,14 +3,6 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
 require 'to_xls'
 
-# Requires supporting files with custom matchers and macros, etc,
-# in ./support/ and its subdirectories.
-Dir["#{File.dirname(__FILE__)}/support/**.rb", ].each {|f| require f}
-
-RSpec.configure do |config|
-  
-end
-
 def mock_model(name, attributes)
   attributes[:attributes] = attributes.clone
   mock(name, attributes)
@@ -46,4 +38,17 @@ def make_book(array, options={})
   book = Spreadsheet::Workbook.new
   ToXls::EnumerableWriter.new(array, options).write_book(book)
   book
+end
+
+def check_format(sheet, header_format, cell_format)
+  sheet.rows.each_with_index do |row, i|
+    hash = i == 0 ? header_format : cell_format
+    compare_hash_format(hash, row.default_format)
+  end
+end
+
+def compare_hash_format(hash, format)
+  hash.each do |key, value| 
+    format.font.send(key).should == value
+  end
 end

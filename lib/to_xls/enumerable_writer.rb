@@ -8,6 +8,8 @@ module ToXls
     def initialize(array, options = {})
       @array = array
       @options = options
+      @cell_format = create_format :cell_format
+      @header_format = create_format :header_format
     end
 
     def write_string(string = '')
@@ -34,12 +36,14 @@ module ToXls
         row_index = 0
 
         if headers_should_be_included?
+          apply_format_to_row(sheet.row(0), @header_format)
           fill_row(sheet.row(0), headers)
           row_index = 1
         end
 
         @array.each do |model|
           row = sheet.row(row_index)
+          apply_format_to_row(row, @cell_format)
           fill_row(row, columns, model)
           row_index += 1
         end
@@ -54,7 +58,7 @@ module ToXls
     end
 
     def can_get_columns_from_first_element?
-      @array.first && 
+      @array.first &&
       @array.first.respond_to?(:attributes) &&
       @array.first.attributes.respond_to?(:keys) &&
       @array.first.attributes.keys.is_a?(Array)
@@ -76,6 +80,14 @@ module ToXls
     end
 
 private
+
+    def apply_format_to_row(row, format)
+      row.default_format = format if format
+    end
+
+    def create_format(name)
+      Spreadsheet::Format.new @options[name] if @options.has_key? name
+    end
 
     def fill_row(row, column, model=nil)
       case column

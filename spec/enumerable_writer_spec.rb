@@ -158,7 +158,15 @@ describe ToXls::EnumerableWriter do
     end
   end
 
-  
-
-
+  describe "formats" do
+    it "accepts the format options" do
+      cell_format = {:color => :blue} 
+      header_format = {:weight => :bold, :color => :red}
+      xls = make_book( mock_users,
+        :cell_format => cell_format,
+        :header_format => header_format
+      )
+      check_format( xls.worksheets.first, header_format, cell_format)
+    end
+  end
 end
