@@ -73,7 +73,7 @@ Then execute
 
     bundle install
 
-== ToXml::Writer
+== ToXls::Writer
 
 You can export to a file or spreadsheet book using the internal ToXml::Writer class:
 
