@@ -75,7 +75,7 @@ Then execute
 
 == ToXls::Writer
 
-You can export to a file or spreadsheet book using the internal ToXml::Writer class:
+You can export to a file or spreadsheet book using the internal ToXls::Writer class:
 
     ToXls::Writer.new(users, :name => 'Users').write_io(file) # writes to a given file
     ToXls::Writer.new(users, :name => 'Users').write_book(book) # writes to a spreadsheet book (adds a new sheet)
