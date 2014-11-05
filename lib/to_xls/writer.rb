@@ -91,8 +91,13 @@ private
 
     def fill_row(row, column, model=nil)
       case column
-      when String, Symbol
-        row.push(model ? model.send(column) : column)
+        when String, Symbol
+          if model.respond_to? "#{column}".to_sym
+            row.push(model ? model.send(column) : column)
+          elsif !model["#{column}".to_sym].nil?
+            row.push(model ? model["#{column}".to_sym] : column)
+          end
+
       when Hash
         column.each{|key, values| fill_row(row, values, model && model.send(key))}
       when Array
