@@ -94,7 +94,7 @@ private
         when String, Symbol
           if model.respond_to? "#{column}".to_sym
             row.push(model ? model.send(column) : column)
-          elsif !model["#{column}".to_sym].nil?
+          elsif model && !model["#{column}".to_sym]
             row.push(model ? model["#{column}".to_sym] : column)
           end
 

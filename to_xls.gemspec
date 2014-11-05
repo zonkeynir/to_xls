@@ -5,9 +5,9 @@ require "to_xls/version"
 Gem::Specification.new do |s|
   s.name        = "to_xls"
   s.version     = ToXls::VERSION
-  s.authors     = ["Enrique Garcia Cota", "Francisco de Juan", "Sergio Díaz Álvarez"]
-  s.email       = %q{egarcia@splendeo.es}
-  s.homepage    = "https://github.com/splendeo/to_xls"
+  s.authors     = ["Enrique Garcia Cota", "Francisco de Juan", "Sergio Díaz Álvarez",'Nir Shabi']
+  s.email       = %q{nir@zonkeysoftware.com}
+  s.homepage    = "https://github.com/zonkeynir/to_xls"
   s.summary     = %q{to_xls for Enumerations}
   s.description = %q{Adds a to_xls method to all enumerations, which can be used to generate excel files conveniently. Can rely on ActiveRecord sugar for obtaining attribute names.}
 
