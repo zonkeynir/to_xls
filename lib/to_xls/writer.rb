@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'stringio'
 require 'spreadsheet'
-
+Spreadsheet.client_encoding = 'UTF-8'
 module ToXls
 
   class Writer
@@ -9,7 +9,8 @@ module ToXls
       @array = array
       @options = options
       @cell_format = create_format :cell_format
-      @header_format = create_format :header_format
+      @header_format = Spreadsheet::Format.new :color=> :blue, :pattern_fg_color => :white, :pattern => 1,:border=>true
+
     end
 
     def write_string(string = '')
@@ -36,8 +37,9 @@ module ToXls
         row_index = 0
 
         if headers_should_be_included?
-          apply_format_to_row(sheet.row(0), @header_format)
-          fill_row(sheet.row(0), headers)
+          row = sheet.row(row_index)
+          apply_format_to_row(row, @header_format)
+          fill_row(row, headers)
           row_index = 1
         end
 
@@ -45,7 +47,7 @@ module ToXls
           row = sheet.row(row_index)
           apply_format_to_row(row, @cell_format)
           fill_row(row, columns, model)
-          row_index += 1
+          row_index=row_index+1
         end
       end
     end
@@ -59,9 +61,9 @@ module ToXls
 
     def can_get_columns_from_first_element?
       @array.first &&
-      @array.first.respond_to?(:attributes) &&
-      @array.first.attributes.respond_to?(:keys) &&
-      @array.first.attributes.keys.is_a?(Array)
+          @array.first.respond_to?(:attributes) &&
+          @array.first.attributes.respond_to?(:keys) &&
+          @array.first.attributes.keys.is_a?(Array)
     end
 
     def get_columns_from_first_element
@@ -76,10 +78,10 @@ module ToXls
     end
 
     def headers_should_be_included?
-      @options[:headers] != false
+      true
     end
 
-private
+    private
 
     def apply_format_to_row(row, format)
       row.default_format = format if format
@@ -92,18 +94,29 @@ private
     def fill_row(row, column, model=nil)
       case column
         when String, Symbol
-          if model.respond_to? "#{column}".to_sym
-            row.push(model ? model.send(column) : column)
-          elsif model && !model["#{column}".to_sym]
-            row.push(model ? model["#{column}".to_sym] : column)
+          if !model.nil?
+            if model.respond_to? "#{column}".to_sym
+              row.push(model ? model.send(column) : column)
+            elsif !model["#{column}".to_sym]
+              a = model["#{column}".to_sym]
+              row.push(model ? a : column)
+            end
+          else
+            row.push(column)
           end
+        # end
 
-      when Hash
-        column.each{|key, values| fill_row(row, values, model && model.send(key))}
-      when Array
-        column.each{|value| fill_row(row, value, model)}
-      else
-        raise ArgumentError, "column #{column} has an invalid class (#{ column.class })"
+
+
+        # row.push(model ? model["#{column}".to_sym] : column)
+
+
+        when Hash
+          column.each{|key, values| fill_row(row, values, model && model.send(key))}
+        when Array
+          column.each{|value| fill_row(row, value, model)}
+        else
+          raise ArgumentError, "column #{column} has an invalid class (#{ column.class })"
       end
     end
 
